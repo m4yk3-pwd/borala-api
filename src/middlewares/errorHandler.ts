@@ -1,34 +1,35 @@
-import { Request, Response, NextFunction } from 'express'
-import { BaseError } from '../exception/BaseError'
-import  {InternalServerError}  from '../exception/InternalServerError' 
-import { ZodError } from "zod";
-import { ValidationError } from "../exception/ValidationError";
+import {Request, Response, NextFunction} from 'express';
+import {BaseError} from '../exception/BaseError';
+import {InternalServerError} from '../exception/InternalServerError';
+import {ZodError} from 'zod';
+import {ValidationError} from '../exception/ValidationError';
 
-
-const normalizeError = (err:Error) => {
+const normalizeError = (err: Error) => {
   if (err instanceof BaseError) {
-    return err
+    return err;
   }
 
   if (err instanceof ZodError) {
-    return new ValidationError(err.issues); 
+    return new ValidationError(err.issues);
   }
 
-  return new InternalServerError(err)
-}
+  return new InternalServerError(err);
+};
 
-const errorHandler = (err:Error, req:Request, res:Response, next:NextFunction) => {
-  
+const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+  // Log completo no terminal para debug — sempre logar antes de responder.
+  console.error('[ERROR]', err);
+
   if (res.headersSent) {
-    return next(err)
+    return next(err);
   }
 
-  const error = normalizeError(err)
+  const error = normalizeError(err);
 
-  const statusCode = error.statusCode
-  const body = error.getBody()
+  const statusCode = error.statusCode;
+  const body = error.getBody();
 
-  res.status(statusCode).send(body)
-}
+  res.status(statusCode).send(body);
+};
 
-export default errorHandler
+export default errorHandler;
