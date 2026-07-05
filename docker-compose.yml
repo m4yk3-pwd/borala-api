@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: borala-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: borala
+      POSTGRES_PASSWORD: borala123
+      POSTGRES_DB: borala_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - borala_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  borala_postgres_data:
